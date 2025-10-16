@@ -7,8 +7,16 @@ license = "MIT OR Apache-2.0"
 authors = ["Your Name <your.email@example.com>"]
 
 [dependencies]
-# Add dependencies as needed, e.g., for testing
-# rand = "0.8" for random keys in tests
+# For WASM support
+wasm-bindgen = { version = "0.2", optional = true }
+
+[features]
+default = []
+wasm = ["wasm-bindgen"]
 
 [dev-dependencies]
-# Add if needed for benchmarking
+criterion = "0.5"
+
+[[bench]]
+name = "cipher_bench"
+harness = false

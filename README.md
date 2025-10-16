@@ -22,7 +22,7 @@ Add to your `Cargo.toml`:
 crux-256 = "0.1.0"
 ```
 
-Example:
+### Basic Block Encryption
 
 ```rust
 use crux_256::{encrypt_block, decrypt_block};
@@ -36,6 +36,51 @@ encrypt_block(&mut block, &key);
 decrypt_block(&mut block, &key);
 // block is back to original
 ```
+
+### Modes for Variable-Length Data
+
+```rust
+use crux_256::{cbc_encrypt, cbc_decrypt, ctr_encrypt, ctr_decrypt, pkcs7_pad, pkcs7_unpad};
+
+let key = [0u8; 32];
+let iv = [0u8; 32];
+let nonce = [0u8; 16];
+let mut data = b"Hello, world!".to_vec();
+
+// CBC mode
+pkcs7_pad(&mut data, 32);
+let ciphertext = cbc_encrypt(&data, &key, &iv);
+let mut plaintext = cbc_decrypt(&ciphertext, &key, &iv);
+pkcs7_unpad(&mut plaintext).unwrap();
+
+// CTR mode
+let ciphertext = ctr_encrypt(b"Hello, world!", &key, &nonce);
+let plaintext = ctr_decrypt(&ciphertext, &key, &nonce);
+```
+
+### WebAssembly (Web)
+
+Compile with `cargo build --target wasm32-unknown-unknown --features wasm`, then use in JS:
+
+```javascript
+import { wasm_encrypt_block, wasm_decrypt_block } from 'crux-256';
+
+const key = new Uint8Array(32);
+const block = new Uint8Array(32).fill(1);
+const encrypted = wasm_encrypt_block(block, key);
+```
+
+### C/Python Integration
+
+Use FFI bindings. For Python, use `ctypes` to call `crux_encrypt_block`.
+
+### Database Example
+
+For encrypting columns in a DB like PostgreSQL, use the FFI to create a UDF.
+
+### Messaging Protocol
+
+For secure messaging, use CTR with key derivation (e.g., HKDF) and AEAD (future GCM mode).
 
 ## Building
 

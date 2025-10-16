@@ -15,8 +15,15 @@ pub mod sbox;
 pub mod permutation;
 pub mod arx;
 pub mod utils;
+pub mod padding;
+pub mod modes;
+pub mod ffi;
+#[cfg(feature = "wasm")]
+pub mod wasm;
 
 pub use cipher::{Crux256, encrypt_block, decrypt_block};
+pub use modes::{cbc_encrypt, cbc_decrypt, ctr_encrypt, ctr_decrypt};
+pub use padding::{pkcs7_pad, pkcs7_unpad};
 
 #[cfg(test)]
 mod tests;
