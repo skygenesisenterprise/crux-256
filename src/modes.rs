@@ -20,7 +20,7 @@ pub fn cbc_encrypt(plaintext: &[u8], key: &[u8; 32], iv: &[u8; 32]) -> Vec<u8> {
         for i in 0..32 {
             buffer[i] ^= prev_block[i];
         }
-        encrypt_block(&mut buffer, key);
+        encrypt_block(&mut buffer, key).unwrap();
         ciphertext.extend_from_slice(&buffer);
         prev_block = buffer;
     }
@@ -36,7 +36,7 @@ pub fn cbc_decrypt(ciphertext: &[u8], key: &[u8; 32], iv: &[u8; 32]) -> Vec<u8> 
     for chunk in ciphertext.chunks(32) {
         buffer.copy_from_slice(chunk);
         let saved_block = buffer;
-        decrypt_block(&mut buffer, key);
+        decrypt_block(&mut buffer, key).unwrap();
         for i in 0..32 {
             buffer[i] ^= prev_block[i];
         }
@@ -56,7 +56,7 @@ pub fn ctr_encrypt(data: &[u8], key: &[u8; 32], nonce: &[u8; 16]) -> Vec<u8> {
         // Generate keystream
         let mut counter_block = [0u8; 32];
         counter_block[0..16].copy_from_slice(&counter);
-        encrypt_block(&mut counter_block, key);
+        encrypt_block(&mut counter_block, key).unwrap();
 
         // XOR with data
         for (i, &byte) in chunk.iter().enumerate() {

@@ -17,6 +17,9 @@ pub mod arx;
 pub mod utils;
 pub mod padding;
 pub mod modes;
+pub mod traits;
+pub mod errors;
+pub mod gcm;
 pub mod ffi;
 #[cfg(feature = "wasm")]
 pub mod wasm;
@@ -24,6 +27,10 @@ pub mod wasm;
 pub use cipher::{Crux256, encrypt_block, decrypt_block};
 pub use modes::{cbc_encrypt, cbc_decrypt, ctr_encrypt, ctr_decrypt};
 pub use padding::{pkcs7_pad, pkcs7_unpad};
+pub use traits::{BlockCipher, AuthenticatedEncryption};
+pub use errors::{CruxError, Result};
+pub use utils::{generate_iv, generate_nonce};
+pub use gcm::{gcm_encrypt, gcm_decrypt};
 
 #[cfg(test)]
 mod tests;

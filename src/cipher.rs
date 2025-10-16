@@ -5,9 +5,11 @@ use crate::permutation::{permute_words, inverse_permute_words};
 use crate::arx::{arx_mix, inverse_arx_mix};
 use crate::key_schedule::{derive_subkeys, num_rounds};
 use crate::utils::{bytes_to_words, words_to_bytes};
+use crate::traits::BlockCipher;
+use crate::errors::Result;
 
 /// Encrypt a 256-bit block with 256-bit key
-pub fn encrypt_block(block: &mut [u8; 32], key: &[u8; 32]) {
+pub fn encrypt_block(block: &mut [u8; 32], key: &[u8; 32]) -> Result<()> {
     let sbox = generate_sbox(key);
     let subkeys = derive_subkeys(key);
     let rounds = num_rounds(key);
@@ -22,10 +24,11 @@ pub fn encrypt_block(block: &mut [u8; 32], key: &[u8; 32]) {
             block[i] ^= key[i % 32];
         }
     }
+    Ok(())
 }
 
 /// Decrypt a 256-bit block with 256-bit key
-pub fn decrypt_block(block: &mut [u8; 32], key: &[u8; 32]) {
+pub fn decrypt_block(block: &mut [u8; 32], key: &[u8; 32]) -> Result<()> {
     let sbox = generate_sbox(key);
     let inv_sbox = generate_inverse_sbox(&sbox);
     let subkeys = derive_subkeys(key);
@@ -41,9 +44,10 @@ pub fn decrypt_block(block: &mut [u8; 32], key: &[u8; 32]) {
         *block = words_to_bytes(&words);
         substitute_bytes(block, &inv_sbox);
     }
+    Ok(())
 }
 
-/// Crux256 cipher struct for stateful operations if needed
+/// Crux256 cipher struct for stateful operations
 pub struct Crux256 {
     key: [u8; 32],
 }
@@ -52,12 +56,25 @@ impl Crux256 {
     pub fn new(key: [u8; 32]) -> Self {
         Self { key }
     }
+}
 
-    pub fn encrypt(&self, block: &mut [u8; 32]) {
-        encrypt_block(block, &self.key);
+impl BlockCipher for Crux256 {
+    const BLOCK_SIZE: usize = 32;
+    const KEY_SIZE: usize = 32;
+
+    fn encrypt_block(&self, block: &mut [u8]) {
+        assert_eq!(block.len(), Self::BLOCK_SIZE);
+        let mut b = [0u8; 32];
+        b.copy_from_slice(block);
+        encrypt_block(&mut b, &self.key).unwrap();
+        block.copy_from_slice(&b);
     }
 
-    pub fn decrypt(&self, block: &mut [u8; 32]) {
-        decrypt_block(block, &self.key);
+    fn decrypt_block(&self, block: &mut [u8]) {
+        assert_eq!(block.len(), Self::BLOCK_SIZE);
+        let mut b = [0u8; 32];
+        b.copy_from_slice(block);
+        decrypt_block(&mut b, &self.key).unwrap();
+        block.copy_from_slice(&b);
     }
 }

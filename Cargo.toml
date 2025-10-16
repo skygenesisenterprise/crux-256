@@ -9,6 +9,8 @@ authors = ["Your Name <your.email@example.com>"]
 [dependencies]
 # For WASM support
 wasm-bindgen = { version = "0.2", optional = true }
+# For secure random
+rand = "0.8"
 
 [features]
 default = []

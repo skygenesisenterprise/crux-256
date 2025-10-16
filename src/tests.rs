@@ -8,10 +8,10 @@ mod tests {
         let mut block = [1u8; 32];
         let original = block;
 
-        encrypt_block(&mut block, &key);
+        encrypt_block(&mut block, &key).unwrap();
         assert_ne!(block, original);
 
-        decrypt_block(&mut block, &key);
+        decrypt_block(&mut block, &key).unwrap();
         assert_eq!(block, original);
     }
 

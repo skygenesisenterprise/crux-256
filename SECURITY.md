@@ -34,6 +34,7 @@ Our team follows best practices for secure coding to minimize the chances of vul
 - **Code review**: All code changes undergo review by at least one other team member to catch potential security issues.
 - **Dependency management**: We regularly audit the project's dependencies for known security issues. Tools like **Snyk**, **Dependabot**, and **npm audit** help us identify vulnerabilities in our dependencies.
 - **Least privilege**: We limit the access of contributors to the project's repositories based on their role to minimize the risk of unauthorized changes.
+- **Cryptographic security**: For CRUX-256, we ensure constant-time operations to prevent timing attacks, use secure random for IVs/nonces, and implement authenticated encryption (GCM) to protect against tampering.
 
 ## Secrets Management
 
@@ -54,5 +55,16 @@ We follow the principle of least privilege for all contributors and collaborator
 We take security seriously, and we are committed to continuously improving the security posture of our project. By following these guidelines, we hope to ensure that this project remains secure, trustworthy, and reliable for all users and contributors.
 
 If you have any questions or concerns regarding this Security Policy, please do not hesitate to contact us at **security@skygenesisenterprise.com**.
+
+## CRUX-256 Security Considerations
+
+CRUX-256 is an experimental cipher and should not be used in production without thorough cryptanalysis. Key security features:
+
+- **Constant-time operations**: All cryptographic operations are designed to run in constant time to avoid timing side-channels.
+- **Authenticated encryption**: Use GCM mode for confidentiality and integrity.
+- **Key management**: Keys must be securely generated and stored; use hardware security modules if possible.
+- **Known limitations**: As a research cipher, it may have undiscovered vulnerabilities. Prefer established ciphers like AES for critical applications.
+
+If you identify a cryptographic weakness in CRUX-256, report it via the vulnerability reporting process.
 
 Thank you for helping us keep our project secure.
